@@ -1,4 +1,38 @@
 import os
+"""
+This module defines the base `Approach` class and supporting data structures for implementing retrieval-augmented generation (RAG) and agentic retrieval approaches using Azure Cognitive Search, Azure OpenAI, and related services.
+Classes:
+    Document: Represents a document retrieved from the search index, including metadata and scoring information.
+    ThoughtStep: Represents a step in the reasoning or thought process, with optional token usage tracking.
+    DataPoints: Holds text and image data points for responses.
+    ExtraInfo: Contains additional information such as data points, thought steps, and follow-up questions.
+    TokenUsageProps: Tracks token usage statistics for completions.
+    GPTReasoningModelSupport: Indicates feature support for GPT reasoning models.
+Abstract Base Class:
+    Approach: Provides a base for implementing retrieval and generation approaches. Handles search, agentic retrieval, embedding computation, prompt management, and chat completion creation.
+Key Methods:
+    build_filter(overrides, auth_claims): Constructs a filter string for search queries based on category and security filters.
+    search(...): Performs a search using Azure Cognitive Search, supporting text, vector, and semantic search.
+    run_agentic_retrieval(...): Executes agentic retrieval using the KnowledgeAgentRetrievalClient and returns both the response and mapped Document objects.
+    get_sources_content(results, use_semantic_captions, use_image_citation): Formats the content of source documents for inclusion in responses.
+    get_citation(sourcepage, use_image_citation): Generates a citation string for a source document, optionally formatting for images.
+    compute_text_embedding(q): Computes a text embedding using the configured OpenAI embedding model.
+    compute_image_embedding(q): Computes an image embedding using the Azure Vision endpoint.
+    get_system_prompt_variables(override_prompt): Determines prompt variables for system prompts, supporting injection or override.
+    get_response_token_limit(model, default_limit): Returns the appropriate token limit for the specified model.
+    create_chat_completion(...): Creates a chat completion request, adjusting parameters for reasoning models as needed.
+    format_thought_step_for_chatcompletion(...): Formats a ThoughtStep for chat completion, including model and token usage info.
+    run(...): Abstract method to execute the approach and return a response.
+    run_stream(...): Abstract method to execute the approach and yield streaming responses.
+Usage:
+    Subclass `Approach` to implement specific retrieval and generation strategies. Use the provided data structures to manage documents, token usage, and reasoning steps.
+Dependencies:
+    - Azure Cognitive Search SDK
+    - Azure OpenAI SDK
+    - aiohttp
+    - openai
+    - Custom modules: promptmanager, authentication
+"""
 from abc import ABC
 from collections.abc import AsyncGenerator, Awaitable
 from dataclasses import dataclass
